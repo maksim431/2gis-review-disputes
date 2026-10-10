@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Жалобы на отзывы · концепт для 2ГИС</title>
+<meta name="description" content="Концепт экрана «Жалобы на отзывы» в кабинете бизнеса 2ГИС. UX/UI: Максим Кощеев. Не является официальным продуктом.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Токены, снятые с 2gis.ru (computed styles) */
+  --font:"SBSansText","SB Sans Text","Inter",Helvetica,Arial,sans-serif;
+  --c-accent:#22AA27;          /* текст-акцент, «Подробнее» */
+  --c-accent-fill:#2ABB2F;     /* заливка кнопок */
+  --c-accent-hover:#239E28;
+  --c-accent-bg:rgba(42,187,47,.10);
+  --c-accent-bg-2:rgba(42,187,47,.16);
+  --c-star:#FFB81C;
+  --c-link:#0072CE;
+  --c-text:#0D0D0D;
+  --c-text-2:#5C5C5C;
+  --c-text-3:#929292;
+  --c-bg:#F2F2F2;
+  --c-surface:#FFFFFF;
+  --c-chip:rgba(179,179,179,.20);
+  --c-divider:rgba(0,0,0,.06);
+  --c-overlay:rgba(0,0,0,.45);
+  /* статусы, выведены из палитры 2ГИС */
+  --c-warn:#BA5D00; --c-warn-bg:rgba(255,184,28,.16);
+  --c-info:#0168F9; --c-info-bg:rgba(1,104,249,.08);
+  --c-danger:#E0262D; --c-danger-bg:rgba(242,48,55,.08);
+  --c-neutral-bg:rgba(179,179,179,.20);
+  --r-s:6px; --r:8px; --r-l:12px; --r-pill:200px;
+  --sh-card:0 1px 4px rgba(0,0,0,.15);
+  --sh-pop:0 8px 32px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);font-size:14px;line-height:18px;color:var(--c-text);background:var(--c-bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea{font:inherit;color:inherit}
+a{color:var(--c-link);text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- Шапка ---------- */
+.top{position:sticky;top:0;z-index:30;height:56px;background:var(--c-surface);box-shadow:0 1px 0 var(--c-divider);display:flex;align-items:center;gap:16px;padding:0 20px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;letter-spacing:-.2px;white-space:nowrap}
+.logo-mark{width:28px;height:28px;border-radius:50%;background:var(--c-accent-fill);display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
+.logo small{font-weight:500;font-size:14px;color:var(--c-text-3);margin-left:2px}
+.concept-tag{font-size:11px;line-height:14px;font-weight:500;color:var(--c-warn);background:var(--c-warn-bg);padding:3px 8px;border-radius:var(--r-pill)}
+.company{display:flex;align-items:center;gap:10px;margin-left:12px;padding:6px 10px;border-radius:var(--r);background:var(--c-bg);min-width:0}
+.company-ava{width:28px;height:28px;border-radius:var(--r-s);background:#7A4A2B;color:#fff;display:grid;place-items:center;font-weight:600;font-size:12px;flex:none}
+.company b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.company span{font-size:11px;line-height:14px;color:var(--c-text-3)}
+.top-sp{flex:1}
+.icon-btn{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;position:relative;color:var(--c-text-2)}
+.icon-btn:hover{background:var(--c-bg)}
+.dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:#F23037;box-shadow:0 0 0 2px #fff}
+.about-btn{font-weight:500;color:var(--c-accent);background:var(--c-accent-bg);padding:8px 12px;border-radius:var(--r);white-space:nowrap}
+.about-btn:hover{background:var(--c-accent-bg-2)}
+.user{width:32px;height:32px;border-radius:50%;background:#E6E6E6;display:grid;place-items:center;font-weight:600;font-size:12px;color:var(--c-text-2)}
+.burger{display:none}
+
+/* ---------- Каркас ---------- */
+.layout{display:flex;max-width:1440px;margin:0 auto}
+.side{width:232px;flex:none;padding:16px 12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:var(--r);color:var(--c-text);text-align:left}
+.nav-item svg{color:var(--c-text-3);flex:none}
+.nav-item:hover{background:rgba(0,0,0,.04)}
+.nav-item.is-active{background:var(--c-surface);box-shadow:var(--sh-card);font-weight:500}
+.nav-item.is-active svg{color:var(--c-accent)}
+.nav-badge{margin-left:auto;font-size:11px;line-height:14px;font-weight:500;padding:2px 7px;border-radius:var(--r-pill);background:var(--c-chip);color:var(--c-text-2)}
+.nav-sep{height:1px;background:var(--c-divider);margin:10px 12px}
+.side-promo{margin-top:16px;padding:14px;border-radius:var(--r-l);background:var(--c-accent-bg)}
+.side-promo b{display:block;margin-bottom:4px;font-weight:600}
+.side-promo p{font-size:13px;line-height:16px;color:var(--c-text-2)}
+
+.main{flex:1;min-width:0;padding:20px 24px 80px}
+.crumbs{display:flex;gap:6px;align-items:center;color:var(--c-text-3);font-size:13px;line-height:16px;margin-bottom:8px}
+.crumbs a{color:var(--c-text-3)}
+.crumbs a:hover{color:var(--c-text)}
+.head{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.head h1{font-size:24px;line-height:30px;font-weight:600;letter-spacing:-.3px}
+.head p{color:var(--c-text-2);margin-top:4px}
+.head-actions{margin-left:auto;display:flex;gap:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:var(--r);font-weight:500;white-space:nowrap;transition:background .15s}
+.btn-primary{background:var(--c-accent-fill);color:#fff}
+.btn-primary:hover{background:var(--c-accent-hover)}
+.btn-primary:disabled{background:#BFBFBF;cursor:not-allowed}
+.btn-soft{background:var(--c-accent-bg);color:var(--c-accent);font-weight:600}
+.btn-soft:hover{background:var(--c-accent-bg-2)}
+.btn-ghost{background:var(--c-chip)}
+.btn-ghost:hover{background:rgba(179,179,179,.32)}
+.btn-s{height:32px;padding:0 12px;font-size:13px}
+
+/* Табы раздела «Отзывы», как сегмент «Филиал / Все филиалы» на 2gis.ru */
+.seg{display:inline-flex;background:var(--c-bg);border-radius:var(--r);padding:2px;gap:2px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--c-divider);margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 4px;margin-right:16px;color:var(--c-text-2);font-weight:500;position:relative;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tab .cnt{font-size:11px;line-height:14px;padding:2px 6px;border-radius:var(--r-pill);background:var(--c-chip);color:var(--c-text-2)}
+.tab.is-active{color:var(--c-text)}
+.tab.is-active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--c-accent-fill)}
+.tab.is-active .cnt{background:var(--c-accent-fill);color:#fff}
+
+/* ---------- Сводка ---------- */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.stat{background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:16px;text-align:left;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.stat:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.stat.is-active{box-shadow:0 0 0 2px var(--c-accent-fill),var(--sh-card)}
+.stat-label{display:flex;align-items:center;gap:8px;color:var(--c-text-2);font-size:13px;line-height:16px}
+.stat-ic{width:24px;height:24px;border-radius:var(--r-s);display:grid;place-items:center;flex:none}
+.stat-num{font-size:28px;line-height:34px;font-weight:600;margin-top:10px;letter-spacing:-.5px}
+.stat-hint{font-size:12px;line-height:15px;color:var(--c-text-3);margin-top:2px}
+.stat-hint.warn{color:var(--c-warn)}
+
+.how{display:flex;align-items:center;gap:16px;background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:12px 16px;margin-bottom:20px}
+.how-steps{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.how-steps::-webkit-scrollbar{display:none}
+.how-step{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:13px;line-height:16px;color:var(--c-text-2)}
+.how-step i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--c-accent-bg);color:var(--c-accent);display:grid;place-items:center;font-weight:600;font-size:12px}
+.how-arr{color:#BFBFBF;flex:none}
+.how b{font-weight:600;white-space:nowrap}
+
+/* ---------- Фильтры ---------- */
+.filters{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.chip{height:34px;padding:0 12px;border-radius:var(--r);background:var(--c-chip);font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip:hover{background:rgba(179,179,179,.32)}
+.chip.is-active{background:var(--c-text);color:#fff}
+.chip .n{font-size:12px;opacity:.6}
+.chip.is-active .n{opacity:.8}
+.filters-sp{flex:1}
+.select{position:relative}
+.select-btn{height:34px;padding:0 10px 0 12px;border-radius:var(--r);background:var(--c-surface);box-shadow:var(--sh-card);display:inline-flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap}
+.menu{position:absolute;right:0;top:40px;min-width:220px;background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-pop);padding:6px;z-index:20;display:none}
+.menu.is-open{display:block}
+.menu button{display:flex;justify-content:space-between;gap:12px;width:100%;padding:9px 10px;border-radius:var(--r-s);text-align:left}
+.menu button:hover{background:var(--c-bg)}
+.menu button.is-active{color:var(--c-accent);font-weight:500}
+.menu small{color:var(--c-text-3)}
+
+/* ---------- Список жалоб ---------- */
+.list{display:flex;flex-direction:column;gap:12px}
+.item{background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:16px;display:grid;grid-template-columns:1fr 300px;gap:20px;text-align:left;width:100%;transition:box-shadow .15s}
+.item:hover{box-shadow:0 4px 14px rgba(0,0,0,.14)}
+.item.is-new{animation:flash 1.6s ease}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--c-accent-fill)}100%{box-shadow:var(--sh-card)}}
+.rv-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ava{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13px;color:#fff;flex:none}
+.rv-name{font-weight:500}
+.rv-meta{font-size:12px;line-height:15px;color:var(--c-text-3)}
+.stars{display:inline-flex;gap:1px;vertical-align:-2px}
+.stars svg{width:12px;height:12px}
+.rv-text{color:var(--c-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
+.rv-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;line-height:15px;padding:4px 8px;border-radius:var(--r-s);background:var(--c-chip);color:var(--c-text-2);white-space:nowrap}
+.tag-branch::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c-text-3);margin-right:6px;vertical-align:1px}
+
+.st{border-left:1px solid var(--c-divider);padding-left:20px;display:flex;flex-direction:column;gap:10px}
+.badge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:15px;font-weight:600;padding:5px 9px;border-radius:var(--r-pill)}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.b-wait{color:var(--c-warn);background:var(--c-warn-bg)}
+.b-mod{color:var(--c-info);background:var(--c-info-bg)}
+.b-ok{color:var(--c-accent);background:var(--c-accent-bg)}
+.b-no{color:var(--c-danger);background:var(--c-danger-bg)}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.track span{height:4px;border-radius:4px;background:#E6E6E6}
+.track .done{background:var(--c-accent-fill)}
+.track .cur{background:linear-gradient(90deg,var(--c-star) 50%,#E6E6E6 50%)}
+.track .fail{background:var(--c-danger)}
+.st-line{font-size:13px;line-height:17px;color:var(--c-text-2)}
+.st-line b{color:var(--c-text);font-weight:600}
+.st-more{font-size:13px;font-weight:500;color:var(--c-accent);margin-top:auto}
+
+/* скелетон */
+.sk{background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:16px;display:grid;grid-template-columns:1fr 300px;gap:20px}
+.sk i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,#EEE 25%,#F6F6F6 37%,#EEE 63%);background-size:400% 100%;animation:sh 1.2s ease infinite;margin-bottom:10px}
+@keyframes sh{0%{background-position:100% 50%}100%{background-position:0 50%}}
+
+/* пустое состояние */
+.empty{background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:40px 24px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.empty svg{margin-bottom:16px}
+.empty h3{font-size:17px;line-height:22px;font-weight:600;margin-bottom:6px}
+.empty p{color:var(--c-text-2);max-width:420px;margin-bottom:16px}
+
+/* ---------- Шторка ---------- */
+.scrim{position:fixed;inset:0;background:var(--c-overlay);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.is-open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:520px;max-width:100%;background:var(--c-surface);z-index:51;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:var(--sh-pop)}
+.drawer.is-open{transform:none}
+.dr-head{display:flex;align-items:center;gap:12px;padding:16px 20px;box-shadow:0 1px 0 var(--c-divider)}
+.dr-head h2{font-size:17px;line-height:22px;font-weight:600;flex:1}
+.dr-body{flex:1;overflow:auto;padding:20px}
+.dr-foot{padding:12px 20px;box-shadow:0 -1px 0 var(--c-divider);display:flex;gap:8px;flex-wrap:wrap}
+.dr-foot .btn{flex:1}
+.block{background:var(--c-bg);border-radius:var(--r-l);padding:14px;margin-bottom:16px}
+.sec-title{font-size:13px;line-height:16px;color:var(--c-text-3);font-weight:500;margin:0 0 10px}
+.outcome{border-radius:var(--r-l);padding:14px 14px 14px 46px;margin-bottom:16px;position:relative}
+.outcome svg{position:absolute;left:14px;top:14px}
+.outcome b{display:block;font-weight:600;margin-bottom:4px}
+.outcome p{color:var(--c-text-2)}
+.o-wait{background:var(--c-warn-bg)} .o-wait svg{color:var(--c-warn)}
+.o-mod{background:var(--c-info-bg)} .o-mod svg{color:var(--c-info)}
+.o-ok{background:var(--c-accent-bg)} .o-ok svg{color:var(--c-accent)}
+.o-no{background:var(--c-danger-bg)} .o-no svg{color:var(--c-danger)}
+
+.tl{position:relative;margin-bottom:16px}
+.tl-step{display:grid;grid-template-columns:24px 1fr;gap:12px;padding-bottom:18px;position:relative}
+.tl-step::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:#E6E6E6}
+.tl-step:last-child::before{display:none}
+.tl-step.done::before{background:var(--c-accent-fill)}
+.tl-dot{width:24px;height:24px;border-radius:50%;background:#E6E6E6;display:grid;place-items:center;color:#fff;position:relative;z-index:1}
+.tl-step.done .tl-dot{background:var(--c-accent-fill)}
+.tl-step.cur .tl-dot{background:var(--c-star)}
+.tl-step.fail .tl-dot{background:var(--c-danger)}
+.tl-step.cur .tl-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;background:rgba(255,184,28,.25);z-index:-1;animation:pulse 1.6s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(.85)}50%{transform:scale(1.1)}}
+.tl-t{font-weight:500}
+.tl-d{font-size:12px;line-height:15px;color:var(--c-text-3);margin-top:2px}
+.tl-n{font-size:13px;line-height:17px;color:var(--c-text-2);margin-top:4px}
+.tl-step.todo .tl-t{color:var(--c-text-3)}
+.countdown{display:flex;align-items:center;gap:12px;background:var(--c-surface);border-radius:var(--r);padding:10px 12px;margin-top:8px}
+.ring{--p:50;width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--c-star) calc(var(--p)*1%),#EEE 0);display:grid;place-items:center;flex:none}
+.ring b{width:28px;height:28px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+
+/* форма новой жалобы */
+.steps{display:flex;gap:6px;margin-bottom:16px}
+.steps span{flex:1;height:4px;border-radius:4px;background:#E6E6E6}
+.steps .on{background:var(--c-accent-fill)}
+.pick{display:block;width:100%;text-align:left;background:var(--c-surface);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:12px 14px;margin-bottom:10px;position:relative}
+.pick:hover{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.pick.is-sel{box-shadow:0 0 0 2px var(--c-accent-fill)}
+.pick.is-locked{background:var(--c-bg);box-shadow:none}
+.pick .rv-text{-webkit-line-clamp:2;margin-bottom:8px}
+.elig{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:15px;font-weight:600;padding:4px 8px;border-radius:var(--r-pill)}
+.e-yes{color:var(--c-accent);background:var(--c-accent-bg)}
+.e-no{color:var(--c-text-2);background:var(--c-chip)}
+.hint{border-radius:var(--r-l);padding:12px 14px;background:var(--c-warn-bg);margin-bottom:12px;font-size:13px;line-height:17px}
+.hint b{display:block;margin-bottom:4px}
+.hint .btn{margin-top:10px}
+.radio{display:flex;gap:12px;align-items:flex-start;background:var(--c-bg);border-radius:var(--r-l);padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.radio input{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #BFBFBF;flex:none;margin-top:-1px;cursor:pointer}
+.radio input:checked{box-shadow:inset 0 0 0 6px var(--c-accent-fill)}
+.radio b{display:block;font-weight:500}
+.radio small{display:block;color:var(--c-text-2);font-size:13px;line-height:17px;margin-top:2px}
+.radio.is-sel{background:var(--c-accent-bg)}
+.field{margin-top:14px}
+.field label{display:block;font-size:13px;color:var(--c-text-2);margin-bottom:6px}
+.field textarea{width:100%;min-height:88px;resize:vertical;border:0;border-radius:var(--r);background:var(--c-bg);padding:10px 12px;outline:none}
+.field textarea:focus{box-shadow:inset 0 0 0 2px var(--c-accent-fill);background:#fff}
+.field .err{color:var(--c-danger);font-size:12px;margin-top:6px;display:none}
+.field.has-err textarea{box-shadow:inset 0 0 0 2px var(--c-danger)}
+.field.has-err .err{display:block}
+.check-list{display:flex;flex-direction:column;gap:6px}
+.check-list label{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);background:var(--c-bg);cursor:pointer}
+.check-list input{accent-color:var(--c-accent-fill);width:16px;height:16px}
+.sum-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--c-divider)}
+.sum-row:last-child{border:0}
+.sum-row span{color:var(--c-text-2)}
+.sum-row b{font-weight:500;text-align:right}
+
+/* ---------- Модалка ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.is-open{display:flex}
+.modal .scrim{z-index:0}
+.modal-card{position:relative;z-index:1;background:var(--c-surface);border-radius:16px;box-shadow:var(--sh-pop);width:100%;max-width:560px;max-height:calc(100vh - 32px);overflow:auto}
+.modal-hero{background:var(--c-accent-bg);height:150px;display:grid;place-items:center;border-radius:16px 16px 0 0;overflow:hidden}
+.modal-body{padding:20px 24px 24px}
+.modal-body h2{font-size:20px;line-height:26px;font-weight:600;margin-bottom:12px}
+.about-grid{display:grid;gap:10px;margin-bottom:16px}
+.about-grid div{background:var(--c-bg);border-radius:var(--r-l);padding:12px 14px}
+.about-grid b{display:block;font-size:12px;line-height:15px;color:var(--c-accent);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.about-grid p{color:var(--c-text);font-size:13px;line-height:18px}
+.author{font-size:13px;line-height:18px;color:var(--c-text-2);margin-bottom:6px}
+.disclaimer{font-size:12px;line-height:16px;color:var(--c-text-3);margin-bottom:16px}
+.modal-x{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center}
+.how-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.how-list div{display:grid;grid-template-columns:28px 1fr;gap:12px;background:var(--c-bg);border-radius:var(--r-l);padding:12px 14px}
+.how-list i{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--c-accent-fill);color:#fff;display:grid;place-items:center;font-weight:600}
+.how-list p{color:var(--c-text-2);font-size:13px;line-height:17px;margin-top:2px}
+
+/* ---------- Тост ---------- */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:#262626;color:#fff;border-radius:var(--r-l);padding:12px 14px 12px 12px;display:flex;align-items:center;gap:12px;z-index:70;transition:transform .25s ease;box-shadow:var(--sh-pop);max-width:calc(100% - 32px)}
+.toast{visibility:hidden}
+.toast.is-show{transform:translate(-50%,0);visibility:visible}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--c-accent-fill);outline-offset:2px}
+.toast-ic{width:24px;height:24px;border-radius:50%;background:var(--c-accent-fill);display:grid;place-items:center;flex:none}
+.toast button{color:#7DDB80;font-weight:600;white-space:nowrap}
+
+/* ---------- Адаптив ---------- */
+@media (max-width:1100px){
+  .item,.sk{grid-template-columns:1fr 240px}
+  .summary{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:860px){
+  .side{display:none}
+  .side.is-open{display:block;position:fixed;left:0;top:56px;z-index:40;background:var(--c-bg);width:260px;box-shadow:var(--sh-pop)}
+  .burger{display:grid}
+  .company{display:none}
+}
+@media (max-width:560px){
+  .top{padding:0 12px;gap:8px}
+  .logo small,.concept-tag{display:none}
+  .about-btn{padding:8px 10px;font-size:13px}
+  .icon-btn.bell{display:none}
+  .main{padding:12px 16px 96px}
+  .head h1{font-size:20px;line-height:26px}
+  .head-actions{display:none}
+  .summary{gap:8px}
+  .stat{padding:12px}
+  .stat-num{font-size:22px;line-height:28px;margin-top:6px}
+  .stat-hint{display:none}
+  .how{flex-direction:column;align-items:flex-start;gap:10px}
+  .how-steps{width:100%}
+  .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px 12px;padding:0 16px 2px}
+  .filters::-webkit-scrollbar{display:none}
+  .filters-sp{display:none}
+  .item,.sk{grid-template-columns:1fr;gap:12px}
+  .st{border-left:0;padding-left:0;border-top:1px solid var(--c-divider);padding-top:12px}
+  .drawer{width:100%;top:auto;bottom:0;height:calc(100% - 24px);border-radius:16px 16px 0 0;transform:translateY(100%)}
+  .drawer.is-open{transform:none}
+  .fab{display:flex!important}
+  .modal{align-items:flex-end;padding:0}
+  .modal-card{border-radius:16px 16px 0 0;max-height:92vh}
+  .menu{right:auto;left:0}
+  .toast{left:16px;right:16px;bottom:76px;transform:translateY(160px)}
+  .toast.is-show{transform:none}
+  .toast #toastText{flex:1}
+}
+.fab{display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:25;height:48px;border-radius:var(--r-l);box-shadow:0 6px 18px rgba(42,187,47,.35)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button class="icon-btn burger" id="burger" aria-label="Меню"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="logo"><span class="logo-mark">2</span>2ГИС <small>Кабинет бизнеса</small></div>
+  <span class="concept-tag">концепт</span>
+  <div class="company">
+    <div class="company-ava">ТУ</div>
+    <div style="min-width:0"><b>Кофейня «Тёплый угол»</b><span>3 филиала · Москва</span></div>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#929292" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="top-sp"></div>
+  <button class="about-btn" id="aboutBtn">О концепции</button>
+  <button class="icon-btn bell" aria-label="Уведомления"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3a5 5 0 00-5 5v3l-1.5 2.5h13L15 11V8a5 5 0 00-5-5zM8 16a2 2 0 004 0" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="dot"></span></button>
+  <div class="user">АК</div>
+</header>
+
+<div class="layout">
+  <aside class="side" id="side">
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 9l7-6 7 6v8H3V9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Главная</button>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 8h6M7 11h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Моя компания</button>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 14V6l10-3v14L4 14zM4 7H2v6h2" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Реклама</button>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 17V9M8 17V5M13 17v-6M18 17V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Статистика</button>
+    <button class="nav-item is-active"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5l2.3 4.7 5.2.8-3.8 3.6.9 5.2-4.6-2.4-4.6 2.4.9-5.2L2.5 8l5.2-.8L10 2.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Отзывы<span class="nav-badge" id="navBadge">4</span></button>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="9" r="1.5" fill="currentColor"/><path d="M4 15l4-4 3 3 2-2 3 3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Фото и видео</button>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="6" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 6V4h6v2" stroke="currentColor" stroke-width="1.6"/></svg>Вакансии</button>
+    <div class="nav-sep"></div>
+    <button class="nav-item"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M8 8a2 2 0 113 1.7c-.6.4-1 .8-1 1.5M10 14h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Помощь</button>
+    <div class="side-promo"><b>Отвечайте на отзывы</b><p>Публичный ответ видят все, кто открывает карточку. Это работает даже там, где жалобу подать нельзя.</p></div>
+  </aside>
+
+  <main class="main">
+    <div class="crumbs"><a href="#">Отзывы</a><span>›</span><span>Жалобы</span></div>
+    <div class="head">
+      <div>
+        <h1>Жалобы на отзывы</h1>
+        <p>Статус каждой жалобы, сроки и решение модерации в одном месте</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-primary" data-new>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>Пожаловаться на отзыв</button>
+      </div>
+    </div>
+
+    <nav class="tabs" aria-label="Разделы отзывов">
+      <button class="tab">Все отзывы <span class="cnt">248</span></button>
+      <button class="tab">Без ответа <span class="cnt">6</span></button>
+      <button class="tab">Неподтверждённые <span class="cnt" id="unconfCnt">9</span></button>
+      <button class="tab is-active">Жалобы <span class="cnt" id="tabCnt">10</span></button>
+    </nav>
+
+    <section class="summary" id="summary" aria-label="Сводка"></section>
+
+    <div class="how">
+      <b>Как идёт жалоба</b>
+      <div class="how-steps">
+        <span class="how-step"><i>1</i>Подана</span><svg class="how-arr" width="14" height="14" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+        <span class="how-step"><i>2</i>Автору 4 дня на подтверждение</span><svg class="how-arr" width="14" height="14" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+        <span class="how-step"><i>3</i>Проверка модератором</span><svg class="how-arr" width="14" height="14" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+        <span class="how-step"><i>4</i>Решение и объяснение</span>
+      </div>
+      <button class="btn btn-soft btn-s" id="howBtn">Подробнее</button>
+    </div>
+
+    <div class="filters" id="filters"></div>
+    <div class="list" id="list" aria-live="polite"></div>
+  </main>
+</div>
+
+<button class="btn btn-primary fab" data-new>Пожаловаться на отзыв</button>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle">
+  <div class="dr-head">
+    <button class="icon-btn" id="drBack" aria-label="Назад" style="display:none"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h2 id="drTitle">Жалоба</h2>
+    <button class="icon-btn" id="drClose" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-foot" id="drFoot"></div>
+</aside>
+
+<div class="modal" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="scrim is-open" data-close style="position:absolute"></div>
+  <div class="modal-card">
+    <button class="modal-x" data-close aria-label="Закрыть"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#262626" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <div class="modal-hero">
+      <svg width="300" height="150" viewBox="0 0 300 150" fill="none" aria-hidden="true">
+        <rect x="58" y="34" width="150" height="96" rx="14" fill="#fff"/>
+        <circle cx="84" cy="58" r="10" fill="#E6E6E6"/><rect x="100" y="52" width="60" height="6" rx="3" fill="#D9D9D9"/><rect x="100" y="62" width="40" height="5" rx="2.5" fill="#EBEBEB"/>
+        <rect x="74" y="80" width="118" height="6" rx="3" fill="#EDEDED"/><rect x="74" y="92" width="96" height="6" rx="3" fill="#EDEDED"/>
+        <rect x="74" y="110" width="26" height="5" rx="2.5" fill="#2ABB2F"/><rect x="104" y="110" width="26" height="5" rx="2.5" fill="#2ABB2F"/><rect x="134" y="110" width="26" height="5" rx="2.5" fill="#FFB81C"/><rect x="164" y="110" width="26" height="5" rx="2.5" fill="#E0E0E0"/>
+        <circle cx="222" cy="44" r="30" fill="#2ABB2F"/><path d="M209 44l9 9 17-18" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="250" cy="104" r="16" fill="#FFB81C"/><path d="M250 96v9l5 4" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M30 120c10-30 20-6 30-26" stroke="#2ABB2F" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round" opacity=".6"/>
+      </svg>
+    </div>
+    <div class="modal-body">
+      <h2 id="aboutTitle">Концепт: трекер жалоб на отзывы</h2>
+      <div class="about-grid">
+        <div><b>Проблема</b><p>Жалоба на отзыв в кабинете работает как «чёрный ящик»: не видно, на каком она шаге, сколько ждать и почему отказали. Владельцы ищут ответы в статьях агентств и банков, пишут бумажные письма и дергают менеджеров и поддержку.</p></div>
+        <div><b>Гипотеза</b><p>Если показать статус каждой жалобы с датами и понятным итогом, а перед подачей сразу говорить, можно ли оспорить отзыв, то повторных жалоб и обращений «что с моей жалобой» станет меньше, а доверие к кабинету вырастет.</p></div>
+        <div><b>Решение</b><p>Сводка по статусам, лента жалоб с прогрессом из 4 шагов, шторка с таймлайном и объяснением решения, мастер новой жалобы с предпроверкой отзыва.</p></div>
+        <div><b>Как измерить</b><p>A/B на части кабинетов: доля повторных жалоб на тот же отзыв, обращения в поддержку по теме отзывов, доля заведомо отклонённых жалоб, доля публичных ответов после отказа.</p></div>
+      </div>
+      <p class="author">Дизайн: Максим Кощеев, UX/UI и продуктовый дизайнер · <a href="https://portfoliomaksim.framer.website/" target="_blank" rel="noopener">портфолио</a> · <a href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener">@maksim_koshcheev</a></p>
+      <p class="disclaimer">Концепт не связан с компанией 2ГИС и не является её продуктом. Компания, отзывы и люди вымышлены.</p>
+      <button class="btn btn-primary" data-close style="width:100%">Посмотреть прототип</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="howModal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+  <div class="scrim is-open" data-close style="position:absolute"></div>
+  <div class="modal-card">
+    <button class="modal-x" data-close aria-label="Закрыть"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#262626" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <div class="modal-body">
+      <h2 id="howTitle">Как рассматривается жалоба</h2>
+      <div class="how-list">
+        <div><i>1</i><div><b>Вы подаёте жалобу</b><p>Выбираете причину. Если клиента не было, укажите, какие данные помогут его узнать: дата визита, номер чека, последние цифры телефона.</p></div></div>
+        <div><i>2</i><div><b>Автору 4 дня на подтверждение</b><p>Мы просим автора подтвердить визит. Ответит и подтвердит: отзыв остаётся. Не ответит: переходим к шагу 3.</p></div></div>
+        <div><i>3</i><div><b>Проверка модератором</b><p>Обычно до 2 рабочих дней. Жалобы на оскорбления и спам проверяются сразу, без запроса автору.</p></div></div>
+        <div><i>4</i><div><b>Решение с объяснением</b><p>Отзыв удаляют, переносят в «Неподтверждённые» (не влияет на рейтинг) или оставляют. Причину видно в карточке жалобы.</p></div></div>
+      </div>
+      <div class="hint"><b>Что оспорить нельзя</b>Отзывы старше 12 месяцев и отзывы, подтверждённые оплатой (Сбер, Т-Банк, чаевые, бронирование). На них лучше ответить публично.</div>
+      <button class="btn btn-primary" data-close style="width:100%">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"><span class="toast-ic"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 7l3 3 5-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="toastText"></span><button id="toastAct"></button></div>
+
+<script>
+(function(){
+"use strict";
+var TODAY = new Date(2026, 9, 10);
+var MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+function d(m, day){ return new Date(2026, m - 1, day); }
+function fmt(dt){ return dt.getDate() + " " + MONTHS[dt.getMonth()]; }
+function addDays(dt, n){ var x = new Date(dt); x.setDate(x.getDate() + n); return x; }
+function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+function plural(n, f){ var a = Math.abs(n) % 100, b = a % 10; if (a > 10 && a < 20) return f[2]; if (b > 1 && b < 5) return f[1]; if (b === 1) return f[0]; return f[2]; }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+var BRANCHES = ["Покровка, 17", "Сокол, Ленинградский пр-т 74", "Арбат, 24"];
+var REASONS = {
+  noclient: { t: "Такого клиента не было", s: "Попросим автора подтвердить визит. 4 дня на ответ." },
+  abuse: { t: "Оскорбления или угрозы", s: "Проверим сразу, без запроса автору." },
+  spam: { t: "Реклама, спам или ссылка на конкурента", s: "Проверим сразу, без запроса автору." },
+  other: { t: "Отзыв о другой компании", s: "Например, перепутали с соседним заведением." }
+};
+var STATUS = {
+  wait: { label: "Ждём автора", cls: "b-wait" },
+  mod: { label: "У модератора", cls: "b-mod" },
+  ok: { label: "Решено в вашу пользу", cls: "b-ok" },
+  no: { label: "Отклонено", cls: "b-no" }
+};
+var COLORS = ["#7E57C2","#26A69A","#EF6C00","#5C6BC0","#8D6E63","#EC407A","#42A5F5","#78909C"];
+
+var complaints = [
+  { id: 1, author: "Дмитрий К.", reviews: 1, rating: 1, date: d(10,6), branch: 0, reason: "noclient",
+    text: "Ждали капучино 40 минут, бариста хамил, в итоге принесли холодный. Больше ни ногой, не советую никому.",
+    filed: d(10,8), status: "wait" },
+  { id: 2, author: "Kotik_2024", reviews: 3, rating: 1, date: d(10,4), branch: 1, reason: "noclient",
+    text: "Отравились сэндвичем с индейкой, всю ночь плохо. Кухня грязная, видно через витрину.",
+    filed: d(10,7), status: "wait" },
+  { id: 3, author: "Ольга Смирнова", reviews: 12, rating: 2, date: d(9,28), branch: 0, reason: "abuse",
+    text: "Администратор, извините за выражение, ведёт себя как... дальше нецензурно. Кофе нормальный, но атмосфера испорчена.",
+    filed: d(10,9), status: "mod" },
+  { id: 4, author: "Максим П.", reviews: 1, rating: 1, date: d(9,12), branch: 1, reason: "noclient",
+    text: "Худшая кофейня района, цены как в ресторане, а порции детские. Заказ перепутали дважды.",
+    filed: d(9,16), status: "ok", outcome: "unconf", closed: d(9,22) },
+  { id: 5, author: "Новый пользователь", reviews: 1, rating: 1, date: d(9,3), branch: 0, reason: "spam",
+    text: "Не ходите сюда, лучше в кофейню через дорогу, там скидка 30% по промокоду...",
+    filed: d(9,5), status: "ok", outcome: "deleted", closed: d(9,5) },
+  { id: 6, author: "Анна В.", reviews: 7, rating: 2, date: d(8,30), branch: 1, reason: "noclient",
+    text: "Долго, шумно, сырники пересушены. На кассе не смогли пробить оплату картой, пришлось переводить.",
+    filed: d(9,2), status: "no", outcome: "confirmed", closed: d(9,8) },
+  { id: 7, author: "Игорь Л.", reviews: 2, rating: 1, date: d(8,18), branch: 0, reason: "noclient",
+    text: "Обещали веранду, а её закрыли без предупреждения. Столик бронировали за неделю.",
+    filed: d(8,21), status: "ok", outcome: "unconf", closed: d(8,27) },
+  { id: 8, author: "Екатерина", reviews: 4, rating: 2, date: d(8,10), branch: 1, reason: "other",
+    text: "Пиццу ждали час, тесто сырое. Официант Артём даже не извинился.",
+    filed: d(8,12), status: "ok", outcome: "deleted-other", closed: d(8,14) },
+  { id: 9, author: "Sergey M.", reviews: 15, rating: 1, date: d(7,22), branch: 0, reason: "noclient",
+    text: "Сломали зонт на входе и отказались компенсировать. Персонал безразличный.",
+    filed: d(7,25), status: "no", outcome: "replied-data", closed: d(7,30) },
+  { id: 10, author: "Виктория Н.", reviews: 6, rating: 2, date: d(7,9), branch: 1, reason: "noclient",
+    text: "Кофе горчит, молоко явно не то, что указано в меню. За 390 ₽ ожидала лучшего.",
+    filed: d(7,11), status: "ok", outcome: "unconf", closed: d(7,17) }
+];
+
+/* Отзывы, на которые можно пожаловаться (для мастера) */
+var candidates = [
+  { id: "c1", author: "Роман Г.", reviews: 1, rating: 1, date: d(10,9), branch: 2, eligible: true,
+    text: "Заказал латте навынос, через 10 минут выбросил: вкус жжёный, стакан протекал. Персонал даже не посмотрел." },
+  { id: "c2", author: "Алина Ш.", reviews: 9, rating: 2, date: d(10,2), branch: 0, eligible: false, lock: "paid",
+    lockText: "Подтверждён оплатой через Сбер 2 октября",
+    text: "Сырники сухие, чай остывший. Раньше было лучше, сейчас чувствуется экономия на всём." },
+  { id: "c3", author: "Пётр", reviews: 2, rating: 1, date: d(9,30), branch: 1, eligible: true,
+    text: "Хамство на кассе. Попросил чек, на меня посмотрели как на врага. Неприятно." },
+  { id: "c4", author: "Наталья О.", reviews: 21, rating: 2, date: d(8,14) , branch: 2, eligible: false, lock: "old",
+    year: true, lockText: "Оставлен 14 августа 2025, старше 12 месяцев",
+    text: "Музыка слишком громкая, невозможно поговорить. Wi‑Fi не работает уже неделю." }
+];
+candidates[3].date = new Date(2025, 7, 14);
+
+var state = { filter: "all", branch: -1, openId: null, wiz: null, firstLoad: true };
+
+/* ---------- Иконки ---------- */
+function starSvg(on){ return '<svg viewBox="0 0 12 12"><path d="M6 .8l1.6 3.3 3.6.5-2.6 2.5.6 3.6L6 9l-3.2 1.7.6-3.6L.8 4.6l3.6-.5L6 .8z" fill="' + (on ? "#FFB81C" : "#E0E0E0") + '"/></svg>'; }
+function stars(n){ var s = ""; for (var i = 1; i <= 5; i++) s += starSvg(i <= n); return '<span class="stars" aria-label="Оценка ' + n + ' из 5">' + s + "</span>"; }
+function ava(name, i){ var ini = name.split(/\s+/).map(function(w){ return w[0]; }).join("").slice(0,2).toUpperCase(); return '<span class="ava" style="background:' + COLORS[i % COLORS.length] + '">' + esc(ini) + "</span>"; }
+var IC = {
+  check: '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="currentColor" opacity=".15"/><path d="M6 10l3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  clock: '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="currentColor" opacity=".15"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  eye: '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="currentColor" opacity=".15"/><path d="M5 10s2-3.5 5-3.5 5 3.5 5 3.5-2 3.5-5 3.5S5 10 5 10z" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="1.4" fill="currentColor"/></svg>',
+  x: '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="currentColor" opacity=".15"/><path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  tick: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cross: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 3l6 6M9 3L3 9" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>',
+  lock: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2.5" y="5.5" width="7" height="5" rx="1.2" fill="currentColor"/><path d="M4 5.5V4a2 2 0 014 0v1.5" stroke="currentColor" stroke-width="1.3"/></svg>'
+};
+
+/* ---------- Модель статуса ---------- */
+function deadline(c){ return addDays(c.filed, 4); }
+function needsAuthor(c){ return c.reason === "noclient"; }
+function steps(c){
+  var auth = needsAuthor(c);
+  var s = [{ t: "Жалоба подана", d: fmt(c.filed), n: "Причина: " + REASONS[c.reason].t.toLowerCase() + ".", st: "done" }];
+  if (auth) {
+    var dl = deadline(c);
+    if (c.status === "wait") {
+      var left = Math.max(daysBetween(TODAY, dl), 0);
+      s.push({ t: "Ждём подтверждения от автора", d: "до " + fmt(dl), n: "Автор получил запрос " + fmt(c.filed) + ". Если не ответит, жалоба уйдёт модератору автоматически.", st: "cur", left: left });
+    } else {
+      var confirmed = c.outcome === "confirmed" || c.outcome === "replied-data";
+      s.push({ t: confirmed ? "Автор ответил на запрос" : "Автор не ответил за 4 дня", d: confirmed ? fmt(addDays(c.filed, 2)) : fmt(dl), n: confirmed ? (c.outcome === "confirmed" ? "Приложил чек оплаты." : "Указал дату визита и последние цифры телефона.") : "Запрос остался без ответа.", st: "done" });
+    }
+  } else {
+    s.push({ t: "Запрос автору не нужен", d: "", n: "Нарушение правил проверяется напрямую.", st: "done" });
+  }
+  if (c.status === "wait") s.push({ t: "Проверка модератором", d: "", n: "Обычно до 2 рабочих дней.", st: "todo" });
+  else if (c.status === "mod") s.push({ t: "Проверка модератором", d: "с " + fmt(c.filed), n: "Решение ожидается до " + fmt(addDays(c.filed, 2)) + ".", st: "cur" });
+  else s.push({ t: "Проверка модератором", d: fmt(c.closed), n: "", st: "done" });
+  if (c.status === "ok") s.push({ t: "Решение: в вашу пользу", d: fmt(c.closed), n: "", st: "done" });
+  else if (c.status === "no") s.push({ t: "Решение: отзыв остаётся", d: fmt(c.closed), n: "", st: "fail" });
+  else s.push({ t: "Решение и объяснение", d: "", n: "", st: "todo" });
+  return s;
+}
+function outcome(c){
+  if (c.status === "wait") { var l = Math.max(daysBetween(TODAY, deadline(c)), 0);
+    return { cls: "o-wait", ic: IC.clock, t: "Автору " + (l === 0 ? "остался последний день" : "осталось " + l + " " + plural(l, ["день","дня","дней"])), p: "Пока отзыв виден как обычно. Ничего делать не нужно: мы напомним автору и сообщим вам о результате." }; }
+  if (c.status === "mod") return { cls: "o-mod", ic: IC.eye, t: "Модератор проверяет отзыв", p: "Жалоба на оскорбления не требует ответа автора. Решение придёт до " + fmt(addDays(c.filed, 2)) + " уведомлением и сюда." };
+  var map = {
+    "unconf": { cls: "o-ok", ic: IC.check, t: "Отзыв перенесён в «Неподтверждённые»", p: "Автор не подтвердил визит. Отзыв больше не влияет на рейтинг и показывается с пометкой. Если автор добавит данные позже, отзыв вернётся, и вы получите уведомление." },
+    "deleted": { cls: "o-ok", ic: IC.check, t: "Отзыв удалён", p: "Нарушение правил: реклама другой компании. Отзыв скрыт для всех и не влияет на рейтинг." },
+    "deleted-other": { cls: "o-ok", ic: IC.check, t: "Отзыв перенесён к другой компании", p: "Автор описывал соседнюю пиццерию. Мы перенесли отзыв в её карточку." },
+    "confirmed": { cls: "o-no", ic: IC.x, t: "Автор подтвердил визит чеком", p: "Отзыв подтверждён и остаётся. Мнение о сервисе не нарушает правила, поэтому удалить его нельзя." },
+    "replied-data": { cls: "o-no", ic: IC.x, t: "Автор подтвердил визит данными", p: "Дата визита и цифры телефона совпали с вашей базой клиентов. Отзыв остаётся." }
+  };
+  return map[c.outcome];
+}
+function statusLine(c){
+  if (c.status === "wait") { var l = Math.max(daysBetween(TODAY, deadline(c)), 0); return "Автору <b>" + (l === 0 ? "сегодня последний день" : "осталось " + l + " " + plural(l, ["день","дня","дней"])) + "</b>, до " + fmt(deadline(c)); }
+  if (c.status === "mod") return "Решение до <b>" + fmt(addDays(c.filed, 2)) + "</b>";
+  var o = outcome(c); return o.t + ", " + fmt(c.closed);
+}
+function trackHtml(c){
+  return '<div class="track" aria-hidden="true">' + steps(c).map(function(s){ return '<span class="' + (s.st === "done" ? "done" : s.st === "cur" ? "cur" : s.st === "fail" ? "fail" : "") + '"></span>'; }).join("") + "</div>";
+}
+
+/* ---------- Рендер ---------- */
+function byBranch(c){ return state.branch < 0 || c.branch === state.branch; }
+function count(st){ return complaints.filter(function(c){ return byBranch(c) && (st === "all" || c.status === st); }).length; }
+
+function renderSummary(){
+  var waiting = complaints.filter(function(c){ return byBranch(c) && c.status === "wait"; });
+  var soon = waiting.map(function(c){ return deadline(c); }).sort(function(a,b){ return a-b; })[0];
+  var closed = complaints.filter(function(c){ return byBranch(c) && (c.status === "ok" || c.status === "no"); });
+  var avg = closed.length ? Math.round(closed.reduce(function(s,c){ return s + daysBetween(c.filed, c.closed); }, 0) / closed.length) : 0;
+  var cards = [
+    { k: "wait", l: "Ждём автора", n: count("wait"), ic: IC.clock, col: "var(--c-warn)", bg: "var(--c-warn-bg)", h: soon ? "Ближайший срок " + fmt(soon) : "Нет активных запросов", warn: !!soon },
+    { k: "mod", l: "У модератора", n: count("mod"), ic: IC.eye, col: "var(--c-info)", bg: "var(--c-info-bg)", h: "Обычно до 2 рабочих дней" },
+    { k: "ok", l: "В вашу пользу", n: count("ok"), ic: IC.check, col: "var(--c-accent)", bg: "var(--c-accent-bg)", h: "В среднем за " + avg + " " + plural(avg, ["день","дня","дней"]) },
+    { k: "no", l: "Отклонено", n: count("no"), ic: IC.x, col: "var(--c-danger)", bg: "var(--c-danger-bg)", h: "С объяснением и советом" }
+  ];
+  document.getElementById("summary").innerHTML = cards.map(function(c){
+    return '<button class="stat' + (state.filter === c.k ? " is-active" : "") + '" data-filter="' + c.k + '"><div class="stat-label"><span class="stat-ic" style="color:' + c.col + ';background:' + c.bg + '">' + c.ic.replace('width="20" height="20"','width="16" height="16"') + "</span>" + c.l + '</div><div class="stat-num">' + c.n + '</div><div class="stat-hint' + (c.warn ? " warn" : "") + '">' + c.h + "</div></button>";
+  }).join("");
+}
+function renderFilters(){
+  var chips = [["all","Все"],["wait","Ждём автора"],["mod","У модератора"],["ok","В вашу пользу"],["no","Отклонено"]];
+  var html = chips.map(function(c){ return '<button class="chip' + (state.filter === c[0] ? " is-active" : "") + '" data-filter="' + c[0] + '">' + c[1] + ' <span class="n">' + count(c[0]) + "</span></button>"; }).join("");
+  html += '<span class="filters-sp"></span><div class="select"><button class="select-btn" id="branchBtn" aria-haspopup="true">' + (state.branch < 0 ? "Все филиалы" : BRANCHES[state.branch].split(",")[0]) + ' <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#929292" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="menu" id="branchMenu">';
+  html += '<button data-branch="-1" class="' + (state.branch < 0 ? "is-active" : "") + '">Все филиалы <small>' + complaints.length + "</small></button>";
+  BRANCHES.forEach(function(b, i){ var n = complaints.filter(function(c){ return c.branch === i; }).length; html += '<button data-branch="' + i + '" class="' + (state.branch === i ? "is-active" : "") + '">' + b + " <small>" + n + "</small></button>"; });
+  html += "</div></div>";
+  document.getElementById("filters").innerHTML = html;
+}
+function renderList(skeleton){
+  var el = document.getElementById("list");
+  if (skeleton) { el.innerHTML = [0,1,2].map(function(){ return '<div class="sk"><div><i style="width:40%"></i><i style="width:92%"></i><i style="width:70%"></i></div><div><i style="width:50%"></i><i></i><i style="width:80%"></i></div></div>'; }).join(""); return; }
+  var items = complaints.filter(function(c){ return byBranch(c) && (state.filter === "all" || c.status === state.filter); });
+  if (!items.length) {
+    var br = state.branch >= 0 ? " в филиале «" + BRANCHES[state.branch].split(",")[0] + "»" : "";
+    el.innerHTML = '<div class="empty">' +
+      '<svg width="160" height="110" viewBox="0 0 160 110" fill="none" aria-hidden="true"><rect x="20" y="20" width="100" height="72" rx="12" fill="#F2F2F2"/><rect x="34" y="36" width="56" height="6" rx="3" fill="#E0E0E0"/><rect x="34" y="50" width="72" height="6" rx="3" fill="#E6E6E6"/><rect x="34" y="64" width="40" height="6" rx="3" fill="#E6E6E6"/><circle cx="118" cy="30" r="22" fill="#2ABB2F"/><path d="M108 30l7 7 13-14" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      "<h3>" + (state.filter === "all" ? "Жалоб пока нет" + br : "Здесь пусто" + br) + "</h3>" +
+      "<p>" + (state.filter === "all" ? "Если появится отзыв, который нарушает правила или написан не вашим клиентом, подайте жалобу. Её путь будет виден здесь шаг за шагом." : "Жалоб с таким статусом нет. Посмотрите все жалобы или выберите другой филиал.") + "</p>" +
+      (state.filter === "all" ? '<button class="btn btn-primary" data-new>Пожаловаться на отзыв</button>' : '<button class="btn btn-ghost" data-filter="all" data-reset-branch>Показать все жалобы</button>') + "</div>";
+    return;
+  }
+  el.innerHTML = items.map(function(c, i){
+    var s = STATUS[c.status];
+    return '<button class="item' + (c.isNew ? " is-new" : "") + '" data-open="' + c.id + '">' +
+      "<div>" +
+        '<div class="rv-head">' + ava(c.author, c.id) + '<div><div class="rv-name">' + esc(c.author) + '</div><div class="rv-meta">' + stars(c.rating) + " · " + fmt(c.date) + " · " + c.reviews + " " + plural(c.reviews, ["отзыв","отзыва","отзывов"]) + "</div></div></div>" +
+        '<div class="rv-text">' + esc(c.text) + "</div>" +
+        '<div class="rv-tags"><span class="tag">' + REASONS[c.reason].t + '</span><span class="tag tag-branch">' + BRANCHES[c.branch].split(",")[0] + "</span></div>" +
+      "</div>" +
+      '<div class="st"><span class="badge ' + s.cls + '">' + s.label + "</span>" + trackHtml(c) + '<div class="st-line">' + statusLine(c) + '</div><span class="st-more">Подробнее</span></div>' +
+    "</button>";
+  }).join("");
+  complaints.forEach(function(c){ c.isNew = false; });
+}
+function renderAll(withSkeleton){
+  renderSummary(); renderFilters();
+  var active = complaints.filter(function(c){ return c.status === "wait" || c.status === "mod"; }).length;
+  document.getElementById("navBadge").textContent = active;
+  document.getElementById("tabCnt").textContent = complaints.length;
+  if (withSkeleton) { renderList(true); setTimeout(function(){ renderList(false); }, 380); }
+  else renderList(false);
+}
+
+/* ---------- Шторка: карточка жалобы ---------- */
+var drawer = document.getElementById("drawer"), scrim = document.getElementById("scrim");
+var drBody = document.getElementById("drBody"), drFoot = document.getElementById("drFoot"), drTitle = document.getElementById("drTitle"), drBack = document.getElementById("drBack");
+var lastFocus = null;
+function openDrawer(){ lastFocus = document.activeElement; drawer.classList.add("is-open"); scrim.classList.add("is-open"); document.body.style.overflow = "hidden"; setTimeout(function(){ document.getElementById("drClose").focus(); }, 50); }
+function closeDrawer(){ drawer.classList.remove("is-open"); scrim.classList.remove("is-open"); document.body.style.overflow = ""; state.openId = null; state.wiz = null; if (lastFocus) lastFocus.focus(); }
+
+function showComplaint(id){
+  var c = complaints.filter(function(x){ return x.id === id; })[0]; if (!c) return;
+  state.openId = id; state.wiz = null;
+  drBack.style.display = "none";
+  drTitle.textContent = "Жалоба от " + fmt(c.filed);
+  var o = outcome(c), st = steps(c);
+  var tl = st.map(function(s){
+    var dot = s.st === "done" ? IC.tick : s.st === "fail" ? IC.cross : "";
+    var extra = "";
+    if (s.st === "cur" && typeof s.left === "number") {
+      var p = Math.round(((4 - s.left) / 4) * 100);
+      extra = '<div class="countdown"><span class="ring" style="--p:' + p + '"><b>' + s.left + '</b></span><div><b style="font-weight:600">' + (s.left === 0 ? "Последний день" : s.left + " " + plural(s.left, ["день","дня","дней"]) + " до решения автора") + '</b><div class="tl-d">Автоматически передадим модератору ' + fmt(deadline(c)) + "</div></div></div>";
+    }
+    return '<div class="tl-step ' + s.st + '"><span class="tl-dot">' + dot + '</span><div><div class="tl-t">' + s.t + "</div>" + (s.d ? '<div class="tl-d">' + s.d + "</div>" : "") + (s.n ? '<div class="tl-n">' + s.n + "</div>" : "") + extra + "</div></div>";
+  }).join("");
+  drBody.innerHTML =
+    '<div class="outcome ' + o.cls + '">' + o.ic + "<b>" + o.t + "</b><p>" + o.p + "</p></div>" +
+    '<p class="sec-title">Отзыв</p><div class="block"><div class="rv-head">' + ava(c.author, c.id) + '<div><div class="rv-name">' + esc(c.author) + '</div><div class="rv-meta">' + stars(c.rating) + " · " + fmt(c.date) + " · " + BRANCHES[c.branch] + '</div></div></div><div style="color:var(--c-text)">' + esc(c.text) + "</div></div>" +
+    '<p class="sec-title">Ход рассмотрения</p><div class="tl">' + tl + "</div>" +
+    (c.status === "no" ? '<div class="hint"><b>Что можно сделать</b>Ответьте публично: спокойный ответ с решением проблемы читают все, кто открывает карточку. Так отзыв работает на вас, а не против.</div>' : "");
+  var foot = "";
+  if (c.status === "no") foot = '<button class="btn btn-primary" data-act="reply">Ответить на отзыв</button><button class="btn btn-ghost" data-act="close">Закрыть</button>';
+  else if (c.status === "wait" || c.status === "mod") foot = '<button class="btn btn-ghost" data-act="withdraw" data-id="' + c.id + '">Отозвать жалобу</button><button class="btn btn-soft" data-act="reply">Ответить публично</button>';
+  else foot = '<button class="btn btn-ghost" data-act="close">Закрыть</button><button class="btn btn-soft" data-act="see">Открыть в «Неподтверждённых»</button>';
+  drFoot.innerHTML = foot;
+  if (!drawer.classList.contains("is-open")) openDrawer();
+  drBody.scrollTop = 0;
+}
+
+/* ---------- Шторка: мастер новой жалобы ---------- */
+function showWizard(step){
+  state.openId = null;
+  if (!state.wiz) state.wiz = { step: 1, pick: null, reason: null, comment: "", data: { date: true, check: false, phone: true } };
+  if (step) state.wiz.step = step;
+  var w = state.wiz;
+  drTitle.textContent = "Новая жалоба";
+  drBack.style.display = w.step > 1 ? "grid" : "none";
+  var bar = '<div class="steps" aria-label="Шаг ' + w.step + ' из 3"><span class="on"></span><span class="' + (w.step > 1 ? "on" : "") + '"></span><span class="' + (w.step > 2 ? "on" : "") + '"></span></div>';
+  var html = bar;
+  if (w.step === 1) {
+    html += '<p class="sec-title">Шаг 1 из 3 · Выберите отзыв</p>';
+    var sel = candidates.filter(function(x){ return x.id === w.pick; })[0];
+    if (sel && !sel.eligible) {
+      html += '<div class="hint"><b>Этот отзыв оспорить нельзя</b>' + esc(sel.lockText) + ". " + (sel.lock === "paid" ? "Отзывы с подтверждённой оплатой точно оставлены вашим клиентом." : "Жалобы принимаются на отзывы за последние 12 месяцев.") + ' Лучшее, что можно сделать сейчас: ответить публично.<br><button class="btn btn-soft btn-s" data-act="reply">Ответить на отзыв</button></div>';
+    }
+    html += candidates.map(function(x, i){
+      var yr = x.year ? " 2025" : "";
+      return '<button class="pick' + (w.pick === x.id ? " is-sel" : "") + (x.eligible ? "" : " is-locked") + '" data-pick="' + x.id + '"><div class="rv-head">' + ava(x.author, i + 3) + '<div><div class="rv-name">' + esc(x.author) + '</div><div class="rv-meta">' + stars(x.rating) + " · " + fmt(x.date) + yr + " · " + BRANCHES[x.branch].split(",")[0] + '</div></div></div><div class="rv-text">' + esc(x.text) + "</div>" +
+        (x.eligible ? '<span class="elig e-yes">' + IC.tick.replace('stroke="#fff"','stroke="currentColor"') + " Можно оспорить</span>" : '<span class="elig e-no">' + IC.lock + " " + esc(x.lockText) + "</span>") + "</button>";
+    }).join("");
+  } else if (w.step === 2) {
+    html += '<p class="sec-title">Шаг 2 из 3 · Что не так с отзывом</p>';
+    html += Object.keys(REASONS).map(function(k){ return '<label class="radio' + (w.reason === k ? " is-sel" : "") + '"><input type="radio" name="reason" value="' + k + '"' + (w.reason === k ? " checked" : "") + "><span><b>" + REASONS[k].t + "</b><small>" + REASONS[k].s + "</small></span></label>"; }).join("");
+    if (w.reason === "noclient") {
+      html += '<div class="field"><label>Что попросить у автора для подтверждения визита</label><div class="check-list">' +
+        '<label><input type="checkbox" data-d="date"' + (w.data.date ? " checked" : "") + "> Дата и время визита</label>" +
+        '<label><input type="checkbox" data-d="check"' + (w.data.check ? " checked" : "") + "> Фото или номер чека</label>" +
+        '<label><input type="checkbox" data-d="phone"' + (w.data.phone ? " checked" : "") + "> Последние 4 цифры телефона</label></div></div>";
+    }
+    html += '<div class="field" id="cmtField"><label for="cmt">Комментарий для модератора</label><textarea id="cmt" placeholder="Например: в этот день филиал был закрыт на санобработку, записи в кассе нет">' + esc(w.comment) + '</textarea><div class="err">Опишите коротко, почему отзыв нарушает правила или не относится к вам (от 10 символов)</div></div>';
+  } else {
+    var p = candidates.filter(function(x){ return x.id === w.pick; })[0];
+    var asks = [w.data.date && "дата визита", w.data.check && "чек", w.data.phone && "цифры телефона"].filter(Boolean).join(", ");
+    html += '<p class="sec-title">Шаг 3 из 3 · Проверьте и отправьте</p>' +
+      '<div class="block"><div class="sum-row"><span>Отзыв</span><b>' + esc(p.author) + ", " + fmt(p.date) + '</b></div><div class="sum-row"><span>Филиал</span><b>' + BRANCHES[p.branch].split(",")[0] + '</b></div><div class="sum-row"><span>Причина</span><b>' + REASONS[w.reason].t + "</b></div>" + (w.reason === "noclient" ? '<div class="sum-row"><span>Запросим у автора</span><b>' + (asks || "любые данные о визите") + "</b></div>" : "") + "</div>" +
+      '<p class="sec-title">Что будет дальше</p><div class="tl">' +
+      (w.reason === "noclient"
+        ? '<div class="tl-step"><span class="tl-dot" style="background:var(--c-accent-fill)">1</span><div><div class="tl-t">Сегодня отправим запрос автору</div><div class="tl-n">Пока идёт проверка, отзыв виден как обычно.</div></div></div><div class="tl-step"><span class="tl-dot" style="background:var(--c-star)">2</span><div><div class="tl-t">До ' + fmt(addDays(TODAY, 4)) + ' ждём ответа</div><div class="tl-n">Автор подтвердит визит: отзыв останется. Не ответит: передадим модератору.</div></div></div>'
+        : '<div class="tl-step"><span class="tl-dot" style="background:var(--c-accent-fill)">1</span><div><div class="tl-t">Сразу передадим модератору</div><div class="tl-n">Запрос автору для этой причины не нужен.</div></div></div>') +
+      '<div class="tl-step"><span class="tl-dot">' + (w.reason === "noclient" ? 3 : 2) + '</span><div><div class="tl-t">Решение придёт уведомлением</div><div class="tl-n">И появится в карточке жалобы с объяснением.</div></div></div></div>';
+  }
+  drBody.innerHTML = html;
+  var foot = "";
+  if (w.step === 1) { var ok = w.pick && candidates.filter(function(x){ return x.id === w.pick; })[0].eligible; foot = '<button class="btn btn-primary" data-act="next"' + (ok ? "" : " disabled") + ">Продолжить</button>"; }
+  else if (w.step === 2) foot = '<button class="btn btn-primary" data-act="next"' + (w.reason ? "" : " disabled") + ">Продолжить</button>";
+  else foot = '<button class="btn btn-primary" data-act="submit">Отправить жалобу</button>';
+  drFoot.innerHTML = foot;
+  if (!drawer.classList.contains("is-open")) openDrawer();
+  drBody.scrollTop = 0;
+}
+
+/* ---------- Тост ---------- */
+var toastTimer;
+function toast(text, actText, actFn){
+  var t = document.getElementById("toast");
+  document.getElementById("toastText").textContent = text;
+  var a = document.getElementById("toastAct"); a.textContent = actText || ""; a.style.display = actText ? "" : "none"; a.onclick = function(){ t.classList.remove("is-show"); if (actFn) actFn(); };
+  t.classList.add("is-show"); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("is-show"); }, 4200);
+}
+
+/* ---------- Модалки ---------- */
+function openModal(id){ document.getElementById(id).classList.add("is-open"); var b = document.querySelector("#" + id + " .btn-primary"); if (b) b.focus(); }
+function closeModals(){ document.querySelectorAll(".modal.is-open").forEach(function(m){ m.classList.remove("is-open"); }); }
+
+/* ---------- События ---------- */
+document.addEventListener("click", function(e){
+  var t = e.target;
+  var menu = document.getElementById("branchMenu");
+  if (t.closest("#branchBtn")) { menu.classList.toggle("is-open"); return; }
+  if (menu && !t.closest(".select")) menu.classList.remove("is-open");
+
+  var f = t.closest("[data-filter]");
+  if (f) { state.filter = f.getAttribute("data-filter"); if (f.hasAttribute("data-reset-branch")) state.branch = -1; renderAll(true); return; }
+  var b = t.closest("[data-branch]");
+  if (b) { state.branch = parseInt(b.getAttribute("data-branch"), 10); renderAll(true); return; }
+  var o = t.closest("[data-open]");
+  if (o) { showComplaint(parseInt(o.getAttribute("data-open"), 10)); return; }
+  if (t.closest("[data-new]")) { state.wiz = null; showWizard(1); return; }
+  var pk = t.closest("[data-pick]");
+  if (pk) { state.wiz.pick = pk.getAttribute("data-pick"); showWizard(1); return; }
+  if (t.closest("[data-close]")) { closeModals(); return; }
+
+  var act = t.closest("[data-act]");
+  if (act) {
+    var a = act.getAttribute("data-act");
+    if (a === "close") closeDrawer();
+    else if (a === "reply") { closeDrawer(); toast("Открыли форму ответа на отзыв", ""); }
+    else if (a === "see") { closeDrawer(); toast("Переход во вкладку «Неподтверждённые»", ""); }
+    else if (a === "withdraw") {
+      var id = parseInt(act.getAttribute("data-id"), 10), idx = -1, removed;
+      complaints.forEach(function(c, i){ if (c.id === id) idx = i; });
+      removed = complaints.splice(idx, 1)[0]; closeDrawer(); renderAll(false);
+      toast("Жалоба отозвана", "Вернуть", function(){ complaints.splice(idx, 0, removed); renderAll(false); });
+    }
+    else if (a === "next") {
+      if (state.wiz.step === 2) {
+        var cm = document.getElementById("cmt"); state.wiz.comment = cm.value;
+        if (state.wiz.reason !== "noclient" && cm.value.trim().length < 10) { document.getElementById("cmtField").classList.add("has-err"); cm.focus(); return; }
+      }
+      showWizard(state.wiz.step + 1);
+    }
+    else if (a === "submit") {
+      var w = state.wiz, p = candidates.filter(function(x){ return x.id === w.pick; })[0];
+      act.disabled = true; act.textContent = "Отправляем…";
+      setTimeout(function(){
+        var nid = Math.max.apply(null, complaints.map(function(c){ return c.id; })) + 1;
+        complaints.unshift({ id: nid, author: p.author, reviews: p.reviews, rating: p.rating, date: p.date, branch: p.branch, reason: w.reason, text: p.text, filed: new Date(TODAY), status: w.reason === "noclient" ? "wait" : "mod", isNew: true });
+        candidates = candidates.filter(function(x){ return x.id !== p.id; });
+        state.filter = "all"; state.branch = -1;
+        closeDrawer(); renderAll(false);
+        var ne = document.querySelector('[data-open="' + nid + '"]'); if (ne) ne.scrollIntoView({ block: "center", behavior: "smooth" });
+        toast(w.reason === "noclient" ? "Жалоба подана. Автору отправлен запрос" : "Жалоба подана и передана модератору", "Открыть", function(){ showComplaint(nid); });
+      }, 600);
+    }
+  }
+});
+document.addEventListener("change", function(e){
+  var t = e.target;
+  if (t.name === "reason") { state.wiz.reason = t.value; var cm = document.getElementById("cmt"); if (cm) state.wiz.comment = cm.value; showWizard(2); }
+  if (t.hasAttribute && t.hasAttribute("data-d")) state.wiz.data[t.getAttribute("data-d")] = t.checked;
+});
+document.addEventListener("input", function(e){ if (e.target.id === "cmt") { state.wiz.comment = e.target.value; document.getElementById("cmtField").classList.remove("has-err"); } });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") { if (document.querySelector(".modal.is-open")) closeModals(); else if (drawer.classList.contains("is-open")) closeDrawer(); } });
+scrim.addEventListener("click", closeDrawer);
+document.getElementById("drClose").addEventListener("click", closeDrawer);
+drBack.addEventListener("click", function(){ if (state.wiz && state.wiz.step > 1) showWizard(state.wiz.step - 1); });
+document.getElementById("aboutBtn").addEventListener("click", function(){ openModal("aboutModal"); });
+document.getElementById("howBtn").addEventListener("click", function(){ openModal("howModal"); });
+document.getElementById("burger").addEventListener("click", function(){ document.getElementById("side").classList.toggle("is-open"); });
+
+renderAll(true);
+var seen = false; try { seen = localStorage.getItem("2gis-disputes-about") === "1"; } catch (err) {}
+if (!seen) { openModal("aboutModal"); try { localStorage.setItem("2gis-disputes-about", "1"); } catch (err) {} }
+})();
+</script>
+</body>
+</html>
